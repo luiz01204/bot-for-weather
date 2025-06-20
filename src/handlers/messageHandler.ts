@@ -20,10 +20,10 @@ export async function handleMessage(sock: WASocket, { messages }: any) {
     log.info(`Mensagem recebida de ${jid}: ${texto}`)
 
     // Responde comandos específicos
-    if (texto === 'menu' || texto === "Menu") return handleMenu(sock, msg)
-    if (texto === '!info') return handleInfo(sock, msg)
-    if (texto.startsWith('!hoje')) return handleHoje(sock, msg, texto)
-    if (texto.startsWith('!amanha')) return handleAmanha(sock, msg, texto)
-    if (texto.startsWith('!depoisdeamanha')) return handleDepois(sock, msg, texto)
+    if (texto === "menu" || texto === "Menu") return handleMenu(sock, msg)
+    if (texto === "!info") return handleInfo(sock, msg)
+    if (texto === "!hoje") return handleHoje(sock, msg, texto)
+    if (texto === "!amanha") return handleAmanha(sock, msg, texto)
+    if (texto === "!depoisdeamanha") return handleDepois(sock, msg, texto)
 
 }

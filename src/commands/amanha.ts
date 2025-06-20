@@ -1,19 +1,19 @@
-import { WASocket, proto } from '@whiskeysockets/baileys'
-import { getForecast } from '../services/weatherService'
-import { delay } from '../utils/delay'
+import { WASocket, proto } from "@whiskeysockets/baileys"
+import { getForecast } from "../services/weatherService"
+import { delay } from "../utils/delay"
 
 export async function handleAmanha(sock: WASocket, msg: proto.IWebMessageInfo, texto: string) {
     const partes = texto.split(' ')
     if (partes.length < 2) {
-        await sock.sendMessage(msg.key.remoteJid!, { text: '⚠️ Ex: !amanha Recife' })
+        await sock.sendMessage(msg.key.remoteJid!, { text: "⚠️ Ex: !amanha Recife" })
         return
     }
 
-    const cidade = partes.slice(1).join(' ')
+    const cidade = partes.slice(1).join(" ")
     const clima = await getForecast(cidade, 1)
 
     if (!clima) {
-        await sock.sendMessage(msg.key.remoteJid!, { text: '❌ Não consegui buscar a previsão.' })
+        await sock.sendMessage(msg.key.remoteJid!, { text: "❌ Não consegui buscar a previsão." })
         return
     }
 

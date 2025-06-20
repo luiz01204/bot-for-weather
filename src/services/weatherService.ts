@@ -1,13 +1,13 @@
-import axios from 'axios'
+import axios from "axios"
 
-const API_KEY = process.env.WEATHER_API_KEY || 'SUA_API_KEY'
-const BASE_URL = 'http://api.weatherapi.com/v1'
+const API_KEY = process.env.WEATHER_API_KEY
+const BASE_URL = "http://api.weatherapi.com/v1"
 
 // Clima atual (hoje)
 export async function getCurrentWeather(city: string) {
     try {
         const { data } = await axios.get(`${BASE_URL}/current.json`, {
-            params: { key: API_KEY, q: city, lang: 'pt' }
+            params: { key: API_KEY, q: city, lang: "pt" }
         })
 
         return {
@@ -26,7 +26,7 @@ export async function getCurrentWeather(city: string) {
 export async function getForecast(city: string, day: number) {
     try {
         const { data } = await axios.get(`${BASE_URL}/forecast.json`, {
-            params: { key: API_KEY, q: city, days: day + 1, lang: 'pt' }
+            params: { key: API_KEY, q: city, days: day + 1, lang: "pt" }
         })
 
         const dia = data.forecast.forecastday[day]

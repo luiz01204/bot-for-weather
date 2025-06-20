@@ -1,7 +1,7 @@
 # 🤖 WhatsApp Bot - Baileys + TypeScript
 
 Um bot de WhatsApp construído com [Baileys](https://github.com/WhiskeySockets/Baileys) e TypeScript, modular, seguro e organizado por camadas.  
-Atualmente suporta comandos como previsão do tempo, mensagens automáticas e muito mais.
+Atualmente suporta comandos como previsão do tempo.
 
 ---
 

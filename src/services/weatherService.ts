@@ -1,44 +1,50 @@
 import axios from "axios"
+import { normalizeText } from "../utils/normalizeText"
+import * as dotenv from "dotenv"
 
-const API_KEY = process.env.WEATHER_API_KEY
-const BASE_URL = "http://api.weatherapi.com/v1"
+dotenv.config()
 
-// Clima atual (hoje)
-export async function getCurrentWeather(city: string) {
-    try {
-        const { data } = await axios.get(`${BASE_URL}/current.json`, {
-            params: { key: API_KEY, q: city, lang: "pt" }
-        })
+const API_KEY = process.env.HG_API_KEY
 
-        return {
-            cidade: data.location.name,
-            pais: data.location.country,
-            temp: data.current.temp_c,
-            condicao: data.current.condition.text,
-            icone: data.current.condition.icon
-        }
-    } catch (err) {
-        return null
-    }
+if (!API_KEY) {
+    throw new Error("❌ Variável HG_API_KEY não encontrada no .env")
 }
 
-// Previsão para N dias (0 = hoje, 1 = amanhã, 2 = depois)
-export async function getForecast(city: string, day: number) {
+interface Forecast {
+    cidade: string
+    pais: string
+    data: string
+    min: number
+    max: number
+    condicao: string
+}
+
+export async function getForecast(cidade: string, dia: number): Promise<Forecast | null> {
     try {
-        const { data } = await axios.get(`${BASE_URL}/forecast.json`, {
-            params: { key: API_KEY, q: city, days: day + 1, lang: "pt" }
+        const response = await axios.get("https://api.hgbrasil.com/weather", {
+            params: {
+                key: API_KEY,
+                city_name: normalizeText(cidade),
+                format: "json"
+            }
         })
 
-        const dia = data.forecast.forecastday[day]
+        const data = response.data.results
+
+        if (!data || !data.forecast || !data.forecast[dia]) return null
+
+        const diaForecast = data.forecast[dia]
+
         return {
-            cidade: data.location.name,
-            pais: data.location.country,
-            data: dia.date,
-            max: dia.day.maxtemp_c,
-            min: dia.day.mintemp_c,
-            condicao: dia.day.condition.text
+            cidade: data.city,
+            pais: "Brasil",
+            data: diaForecast.date,
+            min: diaForecast.min,
+            max: diaForecast.max,
+            condicao: diaForecast.description
         }
-    } catch (err) {
+    } catch (error) {
+        console.error("Erro ao buscar previsão:", error)
         return null
     }
 }

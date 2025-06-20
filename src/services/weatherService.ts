@@ -1,15 +1,18 @@
 import axios from "axios"
-import { normalizeText } from "../utils/normalizeText"
 import * as dotenv from "dotenv"
 
+// Carrega variáveis do arquivo .env
 dotenv.config()
 
+// Pega a chave da API do arquivo .env
 const API_KEY = process.env.HG_API_KEY
 
+// Se não tiver a chave, para tudo e mostra erro
 if (!API_KEY) {
-    throw new Error("❌ Variável HG_API_KEY não encontrada no .env")
+    throw new Error("❌ A variável HG_API_KEY não foi encontrada no arquivo .env")
 }
 
+// Interface com o formato da previsão do tempo
 interface Forecast {
     cidade: string
     pais: string
@@ -19,32 +22,53 @@ interface Forecast {
     condicao: string
 }
 
-export async function getForecast(cidade: string, dia: number): Promise<Forecast | null> {
+// Verifica se o usuário provavelmente quis dizer "São Paulo"
+function usuarioRealmenteQuisSaoPaulo(nomeDigitado: string): boolean {
+    const textoSemAcento = nomeDigitado
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+
+    return textoSemAcento.includes("sao paulo")
+}
+
+// Função principal que busca a previsão
+export async function getForecast(nomeDaCidade: string, dia: number): Promise<Forecast | null> {
     try {
-        const response = await axios.get("https://api.hgbrasil.com/weather", {
+        // Faz a requisição para a API da HG Brasil
+        const resposta = await axios.get("https://api.hgbrasil.com/weather", {
             params: {
                 key: API_KEY,
-                city_name: normalizeText(cidade),
+                city_name: nomeDaCidade, // Ex: "Balneário Camboriú"
                 format: "json"
             }
         })
 
-        const data = response.data.results
+        const dados = resposta.data.results
 
-        if (!data || !data.forecast || !data.forecast[dia]) return null
-
-        const diaForecast = data.forecast[dia]
-
-        return {
-            cidade: data.city,
-            pais: "Brasil",
-            data: diaForecast.date,
-            min: diaForecast.min,
-            max: diaForecast.max,
-            condicao: diaForecast.description
+        // ⚠️ Se a API retornar São Paulo mas o usuário NÃO escreveu São Paulo, dá erro
+        if (
+            dados.city.toLowerCase() === "são paulo" &&
+            !usuarioRealmenteQuisSaoPaulo(nomeDaCidade)
+        ) {
+            return null
         }
-    } catch (error) {
-        console.error("Erro ao buscar previsão:", error)
+
+        // Garante que o dia solicitado existe na resposta
+        const previsaoDoDia = dados.forecast?.[dia]
+        if (!previsaoDoDia) return null
+
+        // Retorna os dados organizados no formato Forecast
+        return {
+            cidade: dados.city,
+            pais: "Brasil", // A API só cobre cidades brasileiras
+            data: previsaoDoDia.date,
+            min: previsaoDoDia.min,
+            max: previsaoDoDia.max,
+            condicao: previsaoDoDia.description
+        }
+    } catch (erro) {
+        console.error("Erro ao buscar previsão do tempo:", erro)
         return null
     }
 }

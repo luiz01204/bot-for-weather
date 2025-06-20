@@ -47,6 +47,8 @@ Crie um arquivo `.env` na raiz com:
 WEATHER_API_KEY=suachave
 ```
 
+Criei sua chave no site da API: [weatherapi](https://www.weatherapi.com/)
+
 ---
 
 ## ▶️ Executando o bot

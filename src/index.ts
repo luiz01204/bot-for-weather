@@ -3,7 +3,6 @@ import makeWASocket, {
     DisconnectReason,
     fetchLatestBaileysVersion
 } from "@whiskeysockets/baileys"
-
 import * as qrcode from "qrcode-terminal"
 import { handleMessage } from "./handlers/messageHandler"
 import { log } from "./utils/logger"
@@ -19,9 +18,12 @@ async function startBot() {
         browser: ["BotZinho", 'Safari', '1.0.0']
     })
 
-    // Mostra QR code no terminal (pra logar)
+    // Conexão com whatsapp web:
     sock.ev.on("connection.update", ({ connection, lastDisconnect, qr }) => {
-        if (qr) qrcode.generate(qr, { small: true })
+        // Se chegou um QR Code, mostra ele no terminal.
+        if (qr) {
+            qrcode.generate(qr, { small: true })
+        }
 
         if (connection === 'close') {
             const code = (lastDisconnect?.error as any)?.output?.statusCode

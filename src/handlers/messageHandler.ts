@@ -9,13 +9,19 @@ import { log } from "../utils/logger"
 // Responde apenas mensagens diretas (não de grupos) e de terceiros
 export async function handleMessage(sock: WASocket, { messages }: any) {
     const msg: proto.IWebMessageInfo = messages[0]
-    if (!msg.message || msg.key.fromMe) return
+
+    if (!msg.message || msg.key.fromMe){
+        return
+    } 
 
     const jid = msg.key.remoteJid!
-    if (!jid.endsWith("@s.whatsapp.net")) return // Ignora grupos
 
-    const texto =
-        msg.message.conversation || msg.message.extendedTextMessage?.text || ""
+    // Ignora grupos
+    if (!jid.endsWith("@s.whatsapp.net")) {
+        return
+    }
+
+    const texto = msg.message.conversation || msg.message.extendedTextMessage?.text || ""
 
     log.info(`Mensagem recebida de ${jid}: ${texto}`)
 

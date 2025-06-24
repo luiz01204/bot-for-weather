@@ -1,10 +1,8 @@
 import axios from "axios"
 import * as dotenv from "dotenv"
 
-// Carrega variáveis do arquivo .env
 dotenv.config()
 
-// Pega a chave da API do arquivo .env
 const API_KEY = process.env.HG_API_KEY
 
 // Se não tiver a chave, para tudo e mostra erro
@@ -47,10 +45,7 @@ export async function getForecast(nomeDaCidade: string, dia: number): Promise<Fo
         const dados = resposta.data.results
 
         // ⚠️ Se a API retornar São Paulo mas o usuário NÃO escreveu São Paulo, dá erro
-        if (
-            dados.city.toLowerCase() === "são paulo" &&
-            !usuarioRealmenteQuisSaoPaulo(nomeDaCidade)
-        ) {
+        if (dados.city.toLowerCase() === "são paulo" && !usuarioRealmenteQuisSaoPaulo(nomeDaCidade)) {
             return null
         }
 
@@ -61,7 +56,7 @@ export async function getForecast(nomeDaCidade: string, dia: number): Promise<Fo
         // Retorna os dados organizados no formato Forecast
         return {
             cidade: dados.city,
-            pais: "Brasil", // A API só cobre cidades brasileiras
+            pais: "Brasil",
             data: previsaoDoDia.date,
             min: previsaoDoDia.min,
             max: previsaoDoDia.max,

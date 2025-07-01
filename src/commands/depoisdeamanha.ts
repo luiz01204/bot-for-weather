@@ -13,12 +13,12 @@ export async function handleDepois(sock: WASocket, msg: proto.IWebMessageInfo, t
     const clima = await getForecast(cidade, 2)
 
     if (!clima) {
-        delay(1200) 
+        delay(2000, sock, msg.key.remoteJid!) 
         await sock.sendMessage(msg.key.remoteJid!, { text: "❌ Não consegui buscar a previsão." })
         return
     }
 
-    await delay(1200)
+    await delay(2000, sock, msg.key.remoteJid!)
     await sock.sendMessage(msg.key.remoteJid!, {
         text: `🌤️ Previsão para *depois de amanhã* em *${clima.cidade} - ${clima.pais}*:\n📅 ${clima.data}\n🌡️ ${clima.min}°C ~ ${clima.max}°C\n📝 ${clima.condicao}`
     })

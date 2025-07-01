@@ -17,7 +17,7 @@ export async function handleAmanha(sock: WASocket, msg: proto.IWebMessageInfo, t
         return
     }
 
-    await delay(1200)
+    await delay(2000, sock, msg.key.remoteJid!)
 
     await sock.sendMessage(msg.key.remoteJid!, {
         text: `🌤️ *Previsão para amanhã em ${clima.cidade} - ${clima.pais}*\n📅 ${clima.data}\n🌡️ Mín: ${clima.min}°C | Máx: ${clima.max}°C\n📝 ${clima.condicao}`
